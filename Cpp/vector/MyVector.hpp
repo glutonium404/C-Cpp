@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
+#include <initializer_list>
 #include <stdexcept>
 
 template<typename T>
@@ -8,8 +10,12 @@ class MyVector {
 public:
     MyVector<T>() = default;
 
-    MyVector<T>(std::size_t size)
-    : _capacity(size), _item_count(size), _arr(new T[size]) {}
+    MyVector<T>(std::size_t size) : _capacity(size), _item_count(size), _arr(new T[size]) {}
+    MyVector<T>(std::size_t size, const T& value) : _capacity(size), _item_count(size), _arr(new T[size]) {
+        for(size_t i=0; i<size; i++) {
+            _arr[i] = value;
+        }
+    }
 
     MyVector<T>(const MyVector<T>& other)
     : _capacity(other._capacity), _item_count(other._item_count) {
@@ -18,6 +24,12 @@ public:
         for(size_t i=0; i<other._item_count; i++) {
             _arr[i] = other._arr[i];
         }
+    }
+
+    MyVector<T>(std::initializer_list<T> init): _capacity(init.size()), _item_count(init.size()) {
+        T* new_arr = new T[_capacity];
+        std::copy(init.begin(), init.end(), new_arr);
+        _arr = new_arr;
     }
 
     ~MyVector() { delete [] _arr; }
@@ -128,7 +140,7 @@ private:
         _capacity = new_capacity;
     }
 
-    void _expand_array(size_t new_capacity, T* source, size_t source_item_count) {
+    void _expand_array(const size_t new_capacity, const T* const source, const size_t source_item_count) {
         T* new_arr = new T[new_capacity];
         _copy_items(new_arr, source, source_item_count);
 
@@ -138,13 +150,13 @@ private:
         _capacity = new_capacity;
     }
 
-    void _copy_items(T* dest) const {
+    void _copy_items(const T* dest) const {
         for(size_t i=0; i<_item_count; i++) {
             dest[i] = _arr[i];
         }
     }
 
-    void _copy_items(T* dest, T* source, size_t item_count) const {
+    void _copy_items(const T* dest, const T* const source, size_t item_count) const {
         for(size_t i=0; i<item_count; i++) {
             dest[i] = source[i];
         }

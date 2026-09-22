@@ -1,83 +1,49 @@
 #include <iostream>
-#include <string>
+#include <utility>
 #include "MyVector.hpp"
 
-void print_vector_info(const std::string& name, const MyVector<int>& vec) {
-    std::cout << name << " | Size: " << vec.size() 
-              << " | Capacity: " << vec.capacity() 
-              << " | Empty: " << (vec.empty() ? "Yes" : "No") << "\nElements: [ ";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        std::cout << vec[i] << " ";
-    }
-    std::cout << "]\n\n---------------------------------------------------\n\n";
-}
+using namespace std;
 
 int main() {
     // instantiation and size constructor
-    MyVector<int> v1;
-    print_vector_info("v1 (Default)", v1);
+    MyVector<int> v1; // default
+    MyVector<int> v2 = { 1, 3, 4, 2 }; // initialiser list
+    MyVector<int> v3(5); // initial size
+    MyVector<int> v4(5, 420); // with default value of 420
+    MyVector<pair<int, bool>> v5({ {1, true}, {2, false}, {3, true} }); // use of generics
 
-    MyVector<int> v2(5);
-    print_vector_info("v2 (Size = 5)", v2);
-
-    // modifiers: push_back and dynamic expansion
-    std::cout << "[2] Pushing Elements & Dynamic Expansion\n";
     for (int i = 10; i <= 50; i += 10) {
-        v1.push_back(i);
-        std::cout << "Pushed: " << i << " -> Size: " << v1.size() << ", Capacity: " << v1.capacity() << "\n";
+        v1.push_back(i); // append item
     }
-    print_vector_info("v1 (After Pushes)", v1);
+
+    v1.pop_back(); // pop from the back
 
     // element access operations
-    std::cout << "[3] Element Access Mechanics\n";
-    std::cout << "v1.front() : " << v1.front() << "\n";
-    std::cout << "v1.back()  : " << v1.back() << "\n";
-    std::cout << "v1[2]      : " << v1[2] << "\n";
-    std::cout << "v1.at(3)   : " << v1.at(3) << "\n";
+    cout <<   v1.front()   << "\n"; // first value
+    cout <<   v1.back()    << "\n"; // last value
+    cout <<   v1[2]        << "\n"; // value at index 2
+    cout <<   v1.at(3)     << "\n"; // value at index 3
 
-    try {
-        std::cout << "Attempting out-of-bounds access via at(100)...\n";
-        v1.at(100);
-    } catch (const std::out_of_range& e) {
-        std::cout << "Caught Exception: " << e.what() << "\n";
-    }
-    std::cout << "---------------------------------------------------\n";
-
-    // modifiers: pop_back
-    std::cout << "[4] Popping Elements\n";
-    v1.pop_back();
-    print_vector_info("v1 (After pop_back)", v1);
+    // error handling, index out of bound
+    try { v1.at(100); } // throws error
+    catch (const out_of_range& e) { }
 
     // memory management: reserve and shrink_to_fit
-    std::cout << "[5] Capacity Controls (reserve & shrink_to_fit)\n";
     v1.reserve(20);
-    print_vector_info("v1 (After reserve(20))", v1);
-
     v1.shrink_to_fit();
-    print_vector_info("v1 (After shrink_to_fit())", v1);
 
     // resizing mechanics
-    std::cout << "[6] Resizing Operations\n";
     v1.resize(8);
-    print_vector_info("v1 (After resize(8))", v1);
-
-    v1.resize(2);
-    print_vector_info("v1 (After resize(2))", v1);
 
     // copy constructor and assignment operator
-    std::cout << "[7] Copy Semantics\n";
-    MyVector<int> v3 = v1; // Copy Construction
-    print_vector_info("v3 (Copy of v1)", v3);
+    MyVector<int> v6 = v1;
 
-    MyVector<int> v4;
     // copy Assignment
+    MyVector<int> v7;
     v4 = v1;
-    print_vector_info("v4 (Assigned from v1)", v4);
 
     // clear mechanics
-    std::cout << "[8] Clearing Container\n";
     v1.clear();
-    print_vector_info("v1 (After clear())", v1);
 
     return 0;
 }
