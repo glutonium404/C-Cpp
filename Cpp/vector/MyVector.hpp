@@ -36,7 +36,7 @@ public:
 
     void push_back(T& item) {
         if(_item_count == _capacity) {
-            _expand_array();
+            _realloc_arr();
         }
 
         _arr[_item_count] = item;
@@ -50,7 +50,7 @@ public:
 
     void reserve(size_t size) {
         if(size <= _capacity) return;
-        _expand_array(size);
+        _realloc_arr(size);
     }
 
     void shrink_to_fit() {
@@ -69,12 +69,12 @@ public:
         // now since expand array does the reallocation we are essentially doing that but with a lesser value than capacity
         // if capacity -> 20, item_count -> 10, shrink_to_fit() -> cap: 10, item_count: 10
         // we do need to destory the items prior to that 
-        _expand_array(_item_count);
+        _realloc_arr(_item_count);
     }
 
     void resize(const size_t size) {
         if(size > _capacity) {
-            _expand_array(size);
+            _realloc_arr(size);
             _item_count = size;
             return;
         }
@@ -112,7 +112,7 @@ public:
 
         if(this == &other) return *this;
 
-        _expand_array(other._capacity, other._arr, other._item_count);
+        _realloc_arr(other._capacity, other._arr, other._item_count);
 
         _item_count = other._item_count;
 
@@ -127,7 +127,7 @@ private:
 
     T* _arr = nullptr;
 
-    void _expand_array(size_t new_capacity = 0) {
+    void _realloc_arr(size_t new_capacity = 0) {
         if(! (new_capacity > 0))
             new_capacity = !_capacity ? _capacity + 1 : _capacity * _growth_factor;
 
@@ -140,7 +140,7 @@ private:
         _capacity = new_capacity;
     }
 
-    void _expand_array(const size_t new_capacity, const T* const source, const size_t source_item_count) {
+    void _realloc_arr(const size_t new_capacity, const T* const source, const size_t source_item_count) {
         T* new_arr = new T[new_capacity];
         _copy_items(new_arr, source, source_item_count);
 
@@ -150,13 +150,13 @@ private:
         _capacity = new_capacity;
     }
 
-    void _copy_items(const T* dest) const {
+    void _copy_items(T* const dest) const {
         for(size_t i=0; i<_item_count; i++) {
             dest[i] = _arr[i];
         }
     }
 
-    void _copy_items(const T* dest, const T* const source, size_t item_count) const {
+    void _copy_items(T* const dest, const T* const source, size_t item_count) const {
         for(size_t i=0; i<item_count; i++) {
             dest[i] = source[i];
         }
